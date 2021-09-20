@@ -5,7 +5,7 @@ endif
 let g:loaded_gitpatch = 1
 
 function s:initialize()
-  command! -range GitpatchAdd <line1>,<line2>call gitpatch#add()
+  command! -range=% GitpatchAdd <line1>,<line2>call gitpatch#add()
 
   nnoremap <Plug>(gitpatch-add) :GitpatchAdd<CR>
   vnoremap <Plug>(gitpatch-add) :GitpatchAdd<CR>
