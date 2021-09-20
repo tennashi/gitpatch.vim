@@ -68,7 +68,15 @@ const applyPatch = async (fileName: string, firstLine: number, lastLine: number)
   await intentAdd(fileName);
   const gitDiff = await getDiff(fileName);
   const parsed = parse(gitDiff);
+  if (parsed.length === 0) {
+    return;
+  }
+
   const limited = limitDiff(parsed[0], firstLine, lastLine);
+  if (limited.hunks.length === 0) {
+    return;
+  }
+
   await applyDiff(toString(limited), limited.afterFileName === fileName);
 }
 
