@@ -18,6 +18,10 @@ INTRODUCTION                                           *gitpatch-introduction*
 
 *gitpatch* is Vim plugin to add the selected range to the index.
 
+Restriction: Apply only to hunk that is completely contained in the selected
+range.  I'm still considering how to apply hunk, which is only partially
+included.
+
 ==============================================================================
 INSTALL                                                     *gitpatch-install*
 
