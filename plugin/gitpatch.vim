@@ -13,5 +13,5 @@ endfunction
 
 augroup InitializeGitpatch
   autocmd!
-  autocmd User DenopsPluginPost:gitpatch call s:initialize()
+  autocmd User DenopsPluginPost:gitpatch call timer_start(0, { _ -> s:initialize() })
 augroup END
