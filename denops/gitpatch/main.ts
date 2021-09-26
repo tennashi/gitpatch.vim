@@ -1,4 +1,4 @@
-import { Denops, ensureString, ensureNumber, parse, Diff, Hunk, toString } from "./deps.ts";
+import { Denops, ensureString, ensureNumber, parse, Diff, Hunk, toString, removeHunksBefore, removeHunksAfter } from "./deps.ts";
 
 const intentAdd = async (fileName: string): Promise<void> => {
   const process = Deno.run({
@@ -41,27 +41,9 @@ const applyDiff = async (patch: string, isNewFile: boolean): Promise<void> => {
 }
 
 const limitDiff = (diff: Diff, firstLine: number, lastLine: number): Diff => {
-  const newHunks = diff.hunks.filter((hunk: Hunk) => {
-    const hunkFirstLine = hunk.header.afterStartLine;
-    const hunkLastLine = hunk.header.afterStartLine + hunk.header.afterLines - 1;
-    return hunkFirstLine >= firstLine && hunkLastLine <= lastLine
-  })
-
-  if (newHunks.length === 1) {
-    newHunks[0] = limitU0Hunk(newHunks[0], firstLine, lastLine);
-  }
-
-  if (newHunks.length >= 2) {
-    newHunks[0] = limitU0Hunk(newHunks[0], firstLine, lastLine);
-    newHunks[newHunks.length - 1] = limitU0Hunk(newHunks[newHunks.length - 1], firstLine, lastLine);
-  }
-
-  diff.hunks = newHunks;
-  return diff;
-}
-
-const limitU0Hunk = (hunk: Hunk, _firstLine: number, _lastLine: number): Hunk => {
-  return hunk;
+  const removeBeforeIndex = diff.hunks.findIndex((hunk: Hunk) => hunk.header.afterStartLine >= firstLine) - 1;
+  const removeAfterIndex = diff.hunks.findIndex((hunk: Hunk) => hunk.header.afterStartLine + hunk.header.afterLines - 1 > lastLine);
+  return removeHunksBefore(removeHunksAfter(diff, removeAfterIndex), removeBeforeIndex);
 }
 
 const applyPatch = async (fileName: string, firstLine: number, lastLine: number): Promise<void> => {
