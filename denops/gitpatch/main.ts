@@ -40,6 +40,26 @@ const applyDiff = async (patch: string, isNewFile: boolean): Promise<void> => {
   return;
 }
 
+const applyReverseDiffToWorkingTree = async (patch: string, isNewFile: boolean): Promise<void> => {
+  let opt: Deno.RunOptions
+  if (isNewFile) {
+    opt = {
+      cmd: ['git', 'apply', '--unidiff-zero', '-p0', '-R', '-'],
+    }
+  } else {
+    opt = {
+      cmd: ['git', 'apply', '--unidiff-zero', '-R', '-'],
+    }
+  }
+
+  const process = Deno.run({ ...opt, stdin: 'piped' });
+  await process.stdin.write(new TextEncoder().encode(patch));
+  process.stdin.close();
+  await process.status();
+  process.close();
+  return;
+}
+
 const limitDiff = (diff: Diff, firstLine: number, lastLine: number): Diff => {
   const removeBeforeIndex = diff.hunks.findIndex((hunk: Hunk) => hunk.header.afterStartLine >= firstLine) - 1;
   const removeAfterIndex = diff.hunks.findIndex((hunk: Hunk) => hunk.header.afterStartLine + hunk.header.afterLines - 1 > lastLine);
@@ -62,6 +82,22 @@ const applyPatch = async (fileName: string, firstLine: number, lastLine: number)
   await applyDiff(toString(limited), limited.afterFileName === fileName);
 }
 
+const restorePatch = async (fileName: string, firstLine: number, lastLine: number): Promise<void> => {
+  await intentAdd(fileName);
+  const gitDiff = await getDiff(fileName);
+  const parsed = parse(gitDiff);
+  if (parsed.length === 0) {
+    return;
+  }
+
+  const limited = limitDiff(parsed[0], firstLine, lastLine);
+  if (limited.hunks.length === 0) {
+    return;
+  }
+
+  await applyReverseDiffToWorkingTree(toString(limited), limited.afterFileName === fileName);
+}
+
 export function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
     async applyPatch(fileName: unknown, firstLine: unknown, lastLine: unknown): Promise<void> {
@@ -70,6 +106,12 @@ export function main(denops: Denops): Promise<void> {
       ensureNumber(lastLine);
       return await applyPatch(fileName, firstLine, lastLine);
     },
+    async restorePatch(fileName: unknown, firstLine: unknown, lastLine: unknown): Promise<void> {
+      ensureString(fileName);
+      ensureNumber(firstLine);
+      ensureNumber(lastLine);
+      return await restorePatch(fileName, firstLine, lastLine);
+    }
   };
   return Promise.resolve();
 }
