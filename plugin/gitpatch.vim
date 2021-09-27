@@ -7,12 +7,16 @@ let g:loaded_gitpatch = 1
 function s:initialize()
   command! -range=% GitpatchAdd <line1>,<line2>call gitpatch#add()
   command! -range=% GitpatchRestore <line1>,<line2>call gitpatch#restore()
+  command! -range=% GitpatchStash <line1>,<line2>call gitpatch#stash()
 
   nnoremap <Plug>(gitpatch-add) :GitpatchAdd<CR>
   vnoremap <Plug>(gitpatch-add) :GitpatchAdd<CR>
 
   nnoremap <Plug>(gitpatch-restore) :GitpatchRestore<CR>
   vnoremap <Plug>(gitpatch-restore) :GitpatchRestore<CR>
+
+  nnoremap <Plug>(gitpatch-stash) :GitpatchStash<CR>
+  vnoremap <Plug>(gitpatch-stash) :GitpatchStash<CR>
 endfunction
 
 augroup InitializeGitpatch

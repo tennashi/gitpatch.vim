@@ -10,3 +10,12 @@ function! gitpatch#restore() range
   let &autoread = l:current_autoread
   unlet l:current_autoread
 endfunction
+
+function! gitpatch#stash() range
+  let l:current_autoread = &autoread
+  setlocal autoread
+  call denops#request('gitpatch', 'stashPatch', [bufname('%'), a:firstline, a:lastline])
+  checktime
+  let &autoread = l:current_autoread
+  unlet l:current_autoread
+endfunction
