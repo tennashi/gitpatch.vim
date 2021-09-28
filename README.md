@@ -29,6 +29,8 @@ $ volt get tennashi/gitpatch.vim
 | Command | Description |
 | ------- | ----------- |
 | `:GitpatchAdd` | Add the selected range to the index.  If you do not select a range, the entire file will be added to the index. |
+| `:GitpatchRestore` | Undo changes to the working tree of the selected range.  If you do not select a range, changes to the entire file will be undone. |
+| `:GitpatchStash` | Stash changes to the working tree of the selected range.  If you do not select a range, changes to the entire file will be stashed. |
 
 Restriction: Apply only to hunk that is completely contained in the selected range.
              I'm still considering how to apply hunk, which is only partially included.

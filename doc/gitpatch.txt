@@ -53,12 +53,28 @@ COMMANDS                                                   *gitpatch-commands*
   Add the selected range to the index.  If you do not select a range, the
   entire file will be added th the index.
 
+:GitpatchRestore                                            *:GitpatchRestore*
+  Undo changes to the working tree of the selected range.  If you do not
+  select a range, changes to the entire file will be undone.
+
+:GitpatchStash                                                *:GitpatchStash*
+  Stash changes to the working tree of the selected range.  If you do not
+  select a range, changes to the entire file will be stashed. 
+
 ------------------------------------------------------------------------------
 MAPPINGS                                                   *gitpatch-mappings*
 
 <Plug>(gitpatch-add)                                    *<Plug>(gitpatch-add)*
   Add the selected range to the index.  If you do not select a range, the
   entire file will be added th the index.
+
+<Plug>(gitpatch-restore)                            *<Plug>(gitpatch-restore)*
+  Undo changes to the working tree of the selected range.  If you do not
+  select a range, changes to the entire file will be undone.
+
+<Plug>(gitpatch-stash)                                *<Plug>(gitpatch-stash)*
+  Stash changes to the working tree of the selected range.  If you do not
+  select a range, changes to the entire file will be stashed. 
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
